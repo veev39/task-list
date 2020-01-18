@@ -9,6 +9,7 @@ use Illuminate\Foundation\Http\FormRequest;
  *
  * @property int|null $page Page number
  * @property int|null $perPage Count of item per page
+ * @property int|string $title Title to search
  */
 class PaginateRequest extends FormRequest
 {
@@ -22,6 +23,7 @@ class PaginateRequest extends FormRequest
         return [
             'page' => ['int'],
             'perPage' => ['int'],
+            'title' => ['string'],
         ];
     }
 }

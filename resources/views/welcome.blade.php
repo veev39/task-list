@@ -20,6 +20,11 @@
 <body>
 <div id="app">
     <div class="container">
+        <label for="search">Search</label>
+        <input type="text" class="form-control" id="search" placeholder="" v-model="title"
+               v-on:change="getTasks()">
+    </div>
+    <div class="container">
         <div class="row">
             <div class="col-sm">Task id</div>
             <div class="col-sm">Title</div>
@@ -34,11 +39,11 @@
         </div>
     </div>
     <div class="container">
-        <button type="button" class="btn btn-light" v-on:click="getPage(pagination.links.previous)">previous</button>
-        <button type="button" class="btn btn-light" v-on:click="getPage(pagination.links.next)">next</button>
+        <button type="button" class="btn btn-light" v-on:click="getPage(-1)">previous</button>
+        <button type="button" class="btn btn-light" v-on:click="getPage(+1)">next</button>
     </div>
     <div class="container" v-if="show">
-        <div >Task id: @{{task.id}}</div>
+        <div>Task id: @{{task.id}}</div>
         <div>Title: @{{task.title}}</div>
         <div>Date: @{{task.date}}</div>
         <div>Author: @{{task.author}}</div>
@@ -55,6 +60,9 @@
   new Vue({
     el: '#app',
     data: {
+      page: 1,
+      perPage: 10,
+      title: '',
       tasks: [],
       task: [],
       pagination: [],
@@ -66,18 +74,18 @@
     },
     methods: {
       getTasks () {
-        axios.get('/api/v1/tasks?perPage=10')
+        axios.get('/api/v1/tasks/?page=' + this.page + '&perPage=' + this.perPage + '&title=' + this.title)
           .then((response) => {
             this.tasks = response.data.data
             this.pagination = response.data.meta.pagination
           })
       },
-      getPage (url) {
-        axios.get(url + '&perPage=10')
-          .then((response) => {
-            this.tasks = response.data.data
-            this.pagination = response.data.meta.pagination
-          })
+      getPage (n) {
+        this.page = this.page + n
+        if (this.page < 1) {
+          this.page = 1
+        }
+        this.getTasks()
       },
       showTask (id) {
         axios.get('/api/v1/tasks/' + id)
@@ -86,7 +94,7 @@
             this.show = true
           })
       },
-      hideTask(){
+      hideTask () {
         this.show = false
       },
     },

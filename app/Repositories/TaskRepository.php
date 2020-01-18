@@ -11,15 +11,20 @@ use Illuminate\Contracts\Pagination\Paginator;
 class TaskRepository
 {
     /**
-     * Get paginated task list.
+     * Get task list with pagination and search.
      *
      * @param int|null $perPage count of item per page
+     * @param string|null $title title to search
      *
      * @return Paginator
      */
-    public function paginate(?int $perPage): Paginator
+    public function getTaskList(?int $perPage, ?string $title): Paginator
     {
-        return Task::paginate($perPage);
+        return Task::where(function ($query) use ($title){
+            if($title){
+                $query->where(Task::TITLE, "LIKE", '%'.$title.'%');
+            }
+        })->paginate($perPage);
     }
     
 }

@@ -41,7 +41,7 @@ class TaskApiController extends BaseApiController
      */
     public function index(PaginateRequest $request, TaskListTransformer $transformer): Response
     {
-        return $this->response->paginator($this->taskRepo->paginate($request->perPage), $transformer);
+        return $this->response->paginator($this->taskRepo->getTaskList($request->perPage, $request->title), $transformer);
     }
     
     /**
